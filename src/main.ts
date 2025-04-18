@@ -6,8 +6,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { EnvInterface } from './interfaces/common.interface';
 
-const APP = 'API';
-const PORT = 5000;
+const APP = 'My Playlist API';
+const PORT = 5100;
 
 /**
  * ANCHOR Bootstrap
