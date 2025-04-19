@@ -5,6 +5,8 @@ import {
   HttpException,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
+  Param,
   Post,
 } from '@nestjs/common';
 import { PlaylistFormBodyDto } from './playlist.dto';
@@ -19,6 +21,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Playlist, PlaylistDocument } from 'src/schemas/playlist.schema';
 import { PlaylistModel } from 'src/models/playlist.model';
 import { PlaylistService } from './services/playlist.service';
+import { ItemParamDto } from 'src/dto/common.dto';
 
 /**
  * ANCHOR Playlist Controller
@@ -138,6 +141,34 @@ export class PlaylistController {
 
     if (!playlist) {
       throw new InternalServerErrorException();
+    }
+
+    return {
+      playlist,
+    };
+  }
+
+  /**
+   * ANCHOR Info
+   * @date 19/04/2025 - 12:24:49
+   *
+   * @async
+   * @param {ItemParamDto} param
+   * @returns {Promise<{
+   *     playlist: PlaylistModel;
+   *   }>}
+   */
+  @Get(':id/info')
+  async info(@Param() param: ItemParamDto): Promise<{
+    playlist: PlaylistModel;
+  }> {
+    // playlist
+    const playlist: PlaylistModel | null = await this.playlistService.info({
+      playlistId: param.id,
+    });
+
+    if (!playlist) {
+      throw new NotFoundException();
     }
 
     return {
