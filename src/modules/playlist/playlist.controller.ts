@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { PlaylistFormBodyDto } from './playlist.dto';
 import {
@@ -18,6 +19,7 @@ import {
   HydratedDocument,
   Model,
   QueryWithHelpers,
+  UpdateWriteOpResult,
 } from 'mongoose';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Playlist, PlaylistDocument } from 'src/schemas/playlist.schema';
@@ -212,6 +214,104 @@ export class PlaylistController {
     }
 
     return [];
+  }
+
+  /**
+   * ANCHOR Update
+   * @date 19/04/2025 - 14:42:42
+   *
+   * @async
+   * @param {ItemParamDto} param
+   * @param {PlaylistFormBodyDto} body
+   * @returns {Promise<{
+   *     playlist: PlaylistModel;
+   *   }>}
+   */
+  @Put(':id/update')
+  async update(
+    @Param() param: ItemParamDto,
+    @Body() body: PlaylistFormBodyDto,
+  ): Promise<{
+    playlist: PlaylistModel;
+  }> {
+    // session
+    const session: ClientSession = await this.connection.startSession();
+    session.startTransaction();
+
+    // playlist id
+    let playlistId: string | null = null;
+
+    try {
+      // playlist
+      const playlist: PlaylistDocument | null =
+        await this.playlistService.playlist({
+          playlistId: param.id,
+          session,
+        });
+
+      if (!playlist) {
+        throw new NotFoundException();
+      }
+
+      // update playlist
+      const playlistUpdatedQuery: QueryWithHelpers<
+        UpdateWriteOpResult,
+        PlaylistDocument
+      > = this.playlistModel.updateOne(
+        {
+          _id: playlist._id,
+        },
+        {
+          title: body.title,
+        },
+        {
+          session,
+          runValidators: true,
+        },
+      );
+
+      const playlistUpdated: UpdateWriteOpResult =
+        await playlistUpdatedQuery.exec();
+
+      if (playlistUpdated.modifiedCount != 1) {
+        throw new InternalServerErrorException();
+      }
+
+      // commit
+      await session.commitTransaction();
+
+      // playlist id
+      playlistId = playlist._id.toString();
+    } catch (e) {
+      if (!(e instanceof HttpException)) {
+        this.logger.error(e);
+      }
+
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+      }
+
+      throw e;
+    } finally {
+      await session.endSession();
+    }
+
+    if (!playlistId) {
+      throw new InternalServerErrorException();
+    }
+
+    // playlist
+    const playlist: PlaylistModel | null = await this.playlistService.info({
+      playlistId,
+    });
+
+    if (!playlist) {
+      throw new NotFoundException();
+    }
+
+    return {
+      playlist,
+    };
   }
 
   /**
