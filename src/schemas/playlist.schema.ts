@@ -57,3 +57,7 @@ export type PlaylistDocument = HydratedDocument<Playlist>;
  * @type {*}
  */
 export const PlaylistSchema = SchemaFactory.createForClass(Playlist);
+
+PlaylistSchema.index({
+  title: 1,
+});

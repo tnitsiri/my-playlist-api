@@ -17,6 +17,12 @@ import { HydratedDocument } from 'mongoose';
 })
 export class Song {
   @Prop({
+    type: String,
+    required: true,
+  })
+  id: string;
+
+  @Prop({
     type: Date,
   })
   createdAt: Date;

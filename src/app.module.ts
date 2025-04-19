@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
 import { PlaylistModule } from './modules/playlist/playlist.module';
+import { SongModule } from './modules/song/song.module';
 
 /**
  * ANCHOR App Module
@@ -45,6 +46,7 @@ import { PlaylistModule } from './modules/playlist/playlist.module';
       }),
     }),
     PlaylistModule,
+    SongModule,
   ],
   controllers: [AppController],
   providers: [AppService],

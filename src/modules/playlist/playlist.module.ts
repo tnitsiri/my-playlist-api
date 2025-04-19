@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { PlaylistController } from './playlist.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Playlist, PlaylistSchema } from 'src/schemas/playlist.schema';
+import { PlaylistService } from './services/playlist.service';
+import { SongService } from '../song/services/song.service';
 
 /**
  * ANCHOR Playlist Module
@@ -21,5 +23,6 @@ import { Playlist, PlaylistSchema } from 'src/schemas/playlist.schema';
     ]),
   ],
   controllers: [PlaylistController],
+  providers: [PlaylistService, SongService],
 })
 export class PlaylistModule {}
