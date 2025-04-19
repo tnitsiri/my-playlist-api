@@ -6,6 +6,7 @@ import { EnvInterface } from './interfaces/common.interface';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
+import { PlaylistModule } from './modules/playlist/playlist.module';
 
 /**
  * ANCHOR App Module
@@ -43,6 +44,7 @@ import { createKeyv } from '@keyv/redis';
         ],
       }),
     }),
+    PlaylistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
