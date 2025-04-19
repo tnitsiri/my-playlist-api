@@ -12,6 +12,8 @@ ___
 git clone https://github.com/tnitsiri/my-playlist-api.git
 cd my-playlist-api.git
 
+./development/services.sh
+
 cp ./development/.env .env
 
 npm i

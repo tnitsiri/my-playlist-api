@@ -16,4 +16,7 @@ export interface EnvInterface {
   REDIS_HOST: string;
   REDIS_PORT: string;
   REDIS_AUTH_PASS: string;
+
+  SPOTIFY_CLIENT_ID: string;
+  SPOTIFY_CLIENT_SECRET: string;
 }

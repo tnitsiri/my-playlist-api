@@ -8,6 +8,9 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
 import { PlaylistModule } from './modules/playlist/playlist.module';
 import { SongModule } from './modules/song/song.module';
+import { SpotifyModule } from './modules/spotify/spotify.module';
+import { CacheService } from './services/cache/cache.service';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 /**
  * ANCHOR App Module
@@ -45,11 +48,23 @@ import { SongModule } from './modules/song/song.module';
         ],
       }),
     }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<EnvInterface>) => ({
+        config: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: Number(configService.get<string>('REDIS_PORT')),
+          password: configService.get<string>('REDIS_AUTH_PASS'),
+        },
+      }),
+    }),
     PlaylistModule,
     SongModule,
+    SpotifyModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
-  exports: [AppService],
+  providers: [AppService, CacheService],
+  exports: [AppService, CacheService],
 })
 export class AppModule {}
