@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   InternalServerErrorException,
@@ -13,6 +14,7 @@ import { PlaylistFormBodyDto } from './playlist.dto';
 import {
   ClientSession,
   Connection,
+  DeleteResult,
   HydratedDocument,
   Model,
   QueryWithHelpers,
@@ -146,6 +148,70 @@ export class PlaylistController {
     return {
       playlist,
     };
+  }
+
+  /**
+   * ANCHOR Remove
+   * @date 19/04/2025 - 14:08:41
+   *
+   * @async
+   * @param {ItemParamDto} param
+   * @returns {Promise<[]>}
+   */
+  @Delete(':id/remove')
+  async remove(@Param() param: ItemParamDto): Promise<[]> {
+    // session
+    const session: ClientSession = await this.connection.startSession();
+    session.startTransaction();
+
+    try {
+      // playlist
+      const playlist: PlaylistDocument | null =
+        await this.playlistService.playlist({
+          playlistId: param.id,
+          session,
+        });
+
+      if (!playlist) {
+        throw new NotFoundException();
+      }
+
+      // delete playlist
+      const playlistDeletedQuery: QueryWithHelpers<
+        DeleteResult,
+        PlaylistDocument
+      > = this.playlistModel.deleteOne(
+        {
+          _id: playlist._id,
+        },
+        {
+          session,
+        },
+      );
+
+      const playlistDeleted: DeleteResult = await playlistDeletedQuery.exec();
+
+      if (playlistDeleted.deletedCount != 1) {
+        throw new InternalServerErrorException();
+      }
+
+      // commit
+      await session.commitTransaction();
+    } catch (e) {
+      if (!(e instanceof HttpException)) {
+        this.logger.error(e);
+      }
+
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+      }
+
+      throw e;
+    } finally {
+      await session.endSession();
+    }
+
+    return [];
   }
 
   /**
