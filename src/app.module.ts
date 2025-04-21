@@ -8,7 +8,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
 import { PlaylistModule } from './modules/playlist/playlist.module';
 import { SongModule } from './modules/song/song.module';
-import { SpotifyModule } from './modules/spotify/spotify.module';
 import { CacheService } from './services/cache/cache.service';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 
@@ -61,7 +60,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     }),
     PlaylistModule,
     SongModule,
-    SpotifyModule,
   ],
   controllers: [AppController],
   providers: [AppService, CacheService],

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SongService } from './services/song.service';
 import { SongController } from './song.controller';
-import { SpotifyService } from '../spotify/services/spotify.service';
-import { SpotifyCacheService } from '../spotify/services/spotify.cache.service';
 
 /**
  * ANCHOR Song Module
@@ -14,6 +12,6 @@ import { SpotifyCacheService } from '../spotify/services/spotify.cache.service';
  */
 @Module({
   controllers: [SongController],
-  providers: [SongService, SpotifyService, SpotifyCacheService],
+  providers: [SongService],
 })
 export class SongModule {}

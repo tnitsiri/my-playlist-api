@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.8",
     "@keyv/redis": "^4.3.3",
     "@liaoliaots/nestjs-redis": "^10.0.0",
     "@nestjs/cache-manager": "^3.0.1",
@@ -44,7 +45,8 @@
     "querystring": "^0.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "youtubei.js": "^13.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
