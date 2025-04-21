@@ -23,6 +23,59 @@ export class Song {
   id: string;
 
   @Prop({
+    type: String,
+    required: true,
+  })
+  songId: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  songTitle: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  albumId: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  albumName: string;
+
+  @Prop({
+    type: [String],
+    required: true,
+  })
+  artistsName: string[];
+
+  @Prop({
+    type: String,
+  })
+  thumbnail?: string | null;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  durationText: string;
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  durationSeconds: number;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  filePathname: string;
+
+  @Prop({
     type: Date,
   })
   createdAt: Date;

@@ -53,6 +53,24 @@ export class Audio {
   thumbnail?: string | null;
 
   @Prop({
+    type: String,
+    required: true,
+  })
+  durationText: string;
+
+  @Prop({
+    type: Number,
+    required: true,
+  })
+  durationSeconds: number;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  filePathname: string;
+
+  @Prop({
     type: Date,
   })
   createdAt: Date;

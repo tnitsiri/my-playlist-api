@@ -1,5 +1,36 @@
 import { Transform } from 'class-transformer';
-import { IsString, Length } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
+  IsString,
+  Length,
+} from 'class-validator';
+
+/**
+ * ANCHOR Song Add Body Dto
+ * @date 22/04/2025 - 00:15:27
+ *
+ * @export
+ * @class SongAddBodyDto
+ * @typedef {SongAddBodyDto}
+ */
+export class SongAddBodyDto {
+  @IsString()
+  @IsMongoId()
+  playlistId: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({
+    each: true,
+  })
+  @IsNotEmpty({
+    each: true,
+  })
+  songsId: string[];
+}
 
 /**
  * ANCHOR Song Search Query Dto

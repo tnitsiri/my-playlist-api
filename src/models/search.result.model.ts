@@ -14,4 +14,6 @@ export interface SearchResultModel {
   albumName: string;
   artistsName: string[];
   thumbnail?: string | null;
+  durationText: string;
+  durationSeconds: number;
 }
