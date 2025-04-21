@@ -8,4 +8,14 @@
  */
 export interface SongModel {
   id: string;
+  songId: string;
+  songTitle: string;
+  albumId: string;
+  albumName: string;
+  artistsName: string[];
+  thumbnail?: string | null;
+  durationText: string;
+  durationSeconds: number;
+  filePathname: string;
+  fileUrl: string;
 }

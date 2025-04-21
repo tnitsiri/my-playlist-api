@@ -26,6 +26,16 @@ export class SongService {
     // model
     const model: SongModel = {
       id: song.id,
+      songId: song.songId,
+      songTitle: song.songTitle,
+      albumId: song.albumId,
+      albumName: song.albumName,
+      artistsName: song.artistsName,
+      thumbnail: song.thumbnail,
+      durationText: song.durationText,
+      durationSeconds: song.durationSeconds,
+      filePathname: song.filePathname,
+      fileUrl: '',
     };
 
     return model;

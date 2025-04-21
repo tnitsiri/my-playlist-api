@@ -74,16 +74,6 @@ export class Song {
     required: true,
   })
   filePathname: string;
-
-  @Prop({
-    type: Date,
-  })
-  createdAt: Date;
-
-  @Prop({
-    type: Date,
-  })
-  updatedAt: Date;
 }
 
 /**

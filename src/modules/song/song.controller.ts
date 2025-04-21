@@ -111,9 +111,6 @@ export class SongController {
       // results
       const results: SearchResultModel[] = [];
 
-      // now
-      const now: Date = new Date();
-
       for (const songId of body.songsId) {
         // song
         const song: Song | undefined = playlist.songs.find((e) => {
@@ -149,8 +146,6 @@ export class SongController {
             durationText: audio.durationText,
             durationSeconds: audio.durationSeconds,
             filePathname: audio.filePathname,
-            createdAt: now,
-            updatedAt: now,
           };
 
           // songs
@@ -233,8 +228,6 @@ export class SongController {
           durationText: audio.durationText,
           durationSeconds: audio.durationSeconds,
           filePathname: audio.filePathname,
-          createdAt: now,
-          updatedAt: now,
         };
 
         // songs
