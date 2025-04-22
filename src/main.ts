@@ -7,7 +7,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { EnvInterface } from './interfaces/common.interface';
 
 const APP = 'My Playlist API';
-const PORT = 5100;
+const PORT = 4500;
 
 /**
  * ANCHOR Bootstrap
