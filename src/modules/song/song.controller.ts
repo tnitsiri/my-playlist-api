@@ -9,9 +9,14 @@ import {
   Logger,
   NotFoundException,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
-import { SongAddBodyDto, SongSearchQueryDto } from './song.dto';
+import {
+  SongAddBodyDto,
+  SongRemoveBodyDto,
+  SongSearchQueryDto,
+} from './song.dto';
 import { Innertube, UniversalCache } from 'youtubei.js';
 import { SearchResultModel } from 'src/models/search.result.model';
 import { v1 as uuidv1 } from 'uuid';
@@ -77,6 +82,79 @@ export class SongController {
     });
 
     this.yt = yt;
+  }
+
+  /**
+   * ANCHOR Remove
+   * @date 22/04/2025 - 16:59:05
+   *
+   * @async
+   * @param {SongRemoveBodyDto} body
+   * @returns {Promise<[]>}
+   */
+  @Put('remove')
+  async remove(@Body() body: SongRemoveBodyDto): Promise<[]> {
+    // session
+    const session: ClientSession = await this.connection.startSession();
+    session.startTransaction();
+
+    try {
+      // playlist
+      const playlist: PlaylistDocument | null =
+        await this.playlistService.playlist({
+          playlistId: body.playlistId,
+          session,
+        });
+
+      if (!playlist) {
+        throw new NotFoundException();
+      }
+
+      // update playlist
+      const playlistUpdatedQuery: QueryWithHelpers<
+        UpdateWriteOpResult,
+        PlaylistDocument
+      > = this.playlistModel.updateOne(
+        {
+          _id: playlist._id,
+        },
+        {
+          $pull: {
+            songs: {
+              id: body.songId,
+            },
+          },
+        },
+        {
+          session,
+          runValidators: true,
+        },
+      );
+
+      const playlistUpdated: UpdateWriteOpResult =
+        await playlistUpdatedQuery.exec();
+
+      if (playlistUpdated.modifiedCount != 1) {
+        throw new InternalServerErrorException();
+      }
+
+      // commit
+      await session.commitTransaction();
+    } catch (e) {
+      if (!(e instanceof HttpException)) {
+        this.logger.error(e);
+      }
+
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+      }
+
+      throw e;
+    } finally {
+      await session.endSession();
+    }
+
+    return [];
   }
 
   /**

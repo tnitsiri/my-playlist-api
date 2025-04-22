@@ -5,24 +5,25 @@ import {
   IsMongoId,
   IsNotEmpty,
   IsString,
+  IsUUID,
   Length,
 } from 'class-validator';
 
 /**
- * ANCHOR Song Audio Param Dto
- * @date 22/04/2025 - 04:30:01
+ * ANCHOR Song Remove Body Dto
+ * @date 22/04/2025 - 16:43:39
  *
  * @export
- * @class SongAudioParamDto
- * @typedef {SongAudioParamDto}
+ * @class SongRemoveBodyDto
+ * @typedef {SongRemoveBodyDto}
  */
-export class SongAudioParamDto {
+export class SongRemoveBodyDto {
   @IsString()
-  @IsNotEmpty()
-  albumId: string;
+  @IsMongoId()
+  playlistId: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   songId: string;
 }
 
