@@ -73,7 +73,13 @@ export class Song {
     type: String,
     required: true,
   })
-  filePathname: string;
+  pathname: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  url: string;
 }
 
 /**

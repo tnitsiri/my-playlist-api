@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { SongAddBodyDto, SongSearchQueryDto } from './song.dto';
-import { Innertube, UniversalCache, Utils } from 'youtubei.js';
+import { Innertube, UniversalCache } from 'youtubei.js';
 import { SearchResultModel } from 'src/models/search.result.model';
 import { v1 as uuidv1 } from 'uuid';
 import {
@@ -25,13 +25,14 @@ import {
 } from 'mongoose';
 import { AudioDocument, Audio } from 'src/schemas/audio.schema';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { createWriteStream, existsSync, mkdirSync } from 'fs';
 import { PlaylistService } from '../playlist/services/playlist.service';
 import { Playlist, PlaylistDocument } from 'src/schemas/playlist.schema';
 import { Song } from 'src/schemas/song.schema';
 import { SongCacheService } from './services/song.cache.service';
 import { CacheService } from 'src/services/cache/cache.service';
 import { uniq } from 'lodash';
+import { buffer } from 'node:stream/consumers';
+import { SongService } from './services/song.service';
 
 /**
  * ANCHOR Song Controller
@@ -55,6 +56,7 @@ export class SongController {
     @InjectModel(Playlist.name)
     private readonly playlistModel: Model<PlaylistDocument>,
     private readonly playlistService: PlaylistService,
+    private readonly songService: SongService,
     private readonly songCacheService: SongCacheService,
     private readonly cacheService: CacheService,
   ) {
@@ -145,7 +147,8 @@ export class SongController {
             thumbnail: audio.thumbnail,
             durationText: audio.durationText,
             durationSeconds: audio.durationSeconds,
-            filePathname: audio.filePathname,
+            pathname: audio.pathname,
+            url: audio.url,
           };
 
           // songs
@@ -175,19 +178,6 @@ export class SongController {
       const audios: AudioDocument[] = [];
 
       for (const result of results) {
-        // dir
-        const dir = `${process.env.SONG_DIR}/${result.songId}`;
-
-        if (!existsSync(dir)) {
-          mkdirSync(dir);
-        }
-
-        // file pathname
-        const filePathname: string = `${dir}/${result.songId}.m4a`;
-
-        // file
-        const file = createWriteStream(filePathname);
-
         // stream
         const stream = await this.yt.download(result.songId, {
           type: 'video+audio', // audio, video or video+audio
@@ -196,9 +186,17 @@ export class SongController {
           client: 'YTMUSIC',
         });
 
-        for await (const chunk of Utils.streamToIterable(stream)) {
-          file.write(chunk);
-        }
+        // file
+        const file: Buffer = await buffer(stream);
+
+        // pathname
+        const pathname: string = `${result.albumId}/${result.songId}.m4a`;
+
+        // upload
+        const url: string = await this.songService.upload({
+          file,
+          pathname,
+        });
 
         // audio
         const audio: AudioDocument = new this.audioModel({
@@ -210,7 +208,8 @@ export class SongController {
           thumbnail: result.thumbnail,
           durationText: result.durationText,
           durationSeconds: result.durationSeconds,
-          filePathname,
+          pathname,
+          url,
         });
 
         // audios
@@ -227,7 +226,8 @@ export class SongController {
           thumbnail: audio.thumbnail,
           durationText: audio.durationText,
           durationSeconds: audio.durationSeconds,
-          filePathname: audio.filePathname,
+          pathname: audio.pathname,
+          url,
         };
 
         // songs

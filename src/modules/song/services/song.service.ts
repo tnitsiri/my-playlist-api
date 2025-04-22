@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SongModel } from 'src/models/song.model';
 import { Song } from 'src/schemas/song.schema';
+import { InjectS3, S3 } from 'nestjs-s3';
 
 /**
  * ANCHOR Song Service
@@ -12,6 +13,11 @@ import { Song } from 'src/schemas/song.schema';
  */
 @Injectable()
 export class SongService {
+  constructor(
+    @InjectS3()
+    private readonly s3: S3,
+  ) {}
+
   /**
    * ANCHOR Model
    * @date 19/04/2025 - 11:24:10
@@ -34,10 +40,36 @@ export class SongService {
       thumbnail: song.thumbnail,
       durationText: song.durationText,
       durationSeconds: song.durationSeconds,
-      filePathname: song.filePathname,
-      fileUrl: '',
+      pathname: song.pathname,
+      url: song.url,
     };
 
     return model;
+  }
+
+  /**
+   * ANCHOR Upload
+   * @date 22/04/2025 - 13:14:19
+   *
+   * @async
+   * @param {{ file: Buffer; pathname: string }} payload
+   * @returns {Promise<string>}
+   */
+  async upload(payload: { file: Buffer; pathname: string }): Promise<string> {
+    // key
+    const key: string = `${process.env.DIGITALOCEAN_SPACES_NAMESPACE}/${payload.pathname}`;
+
+    // upload
+    await this.s3.putObject({
+      Bucket: process.env.DIGITALOCEAN_SPACES_BUCKET,
+      Key: key,
+      Body: payload.file,
+      ACL: 'public-read',
+    });
+
+    // url
+    const url: string = `https://${process.env.DIGITALOCEAN_SPACES_BUCKET}.${process.env.DIGITALOCEAN_SPACES_REGION}.cdn.digitaloceanspaces.com/${key}`;
+
+    return url;
   }
 }

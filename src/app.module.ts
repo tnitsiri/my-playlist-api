@@ -10,6 +10,7 @@ import { PlaylistModule } from './modules/playlist/playlist.module';
 import { SongModule } from './modules/song/song.module';
 import { CacheService } from './services/cache/cache.service';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { S3Module } from 'nestjs-s3';
 
 /**
  * ANCHOR App Module
@@ -55,6 +56,26 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
           host: configService.get<string>('REDIS_HOST'),
           port: Number(configService.get<string>('REDIS_PORT')),
           password: configService.get<string>('REDIS_AUTH_PASS'),
+        },
+      }),
+    }),
+    S3Module.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<EnvInterface>) => ({
+        config: {
+          forcePathStyle: true,
+          signatureVersion: 'v4',
+          region: configService.get<string>('DIGITALOCEAN_SPACES_REGION'),
+          endpoint: configService.get<string>('DIGITALOCEAN_SPACES_ENDPOINT'),
+          credentials: {
+            accessKeyId: configService.get<string>(
+              'DIGITALOCEAN_SPACES_ACCESS_KEY_ID',
+            )!,
+            secretAccessKey: configService.get<string>(
+              'DIGITALOCEAN_SPACES_SECRET_ACCESS_KEY',
+            )!,
+          },
         },
       }),
     }),

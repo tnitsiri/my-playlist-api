@@ -9,6 +9,24 @@ import {
 } from 'class-validator';
 
 /**
+ * ANCHOR Song Audio Param Dto
+ * @date 22/04/2025 - 04:30:01
+ *
+ * @export
+ * @class SongAudioParamDto
+ * @typedef {SongAudioParamDto}
+ */
+export class SongAudioParamDto {
+  @IsString()
+  @IsNotEmpty()
+  albumId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  songId: string;
+}
+
+/**
  * ANCHOR Song Add Body Dto
  * @date 22/04/2025 - 00:15:27
  *

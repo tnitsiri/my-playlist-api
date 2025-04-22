@@ -16,6 +16,6 @@ export interface SongModel {
   thumbnail?: string | null;
   durationText: string;
   durationSeconds: number;
-  filePathname: string;
-  fileUrl: string;
+  pathname: string;
+  url: string;
 }
